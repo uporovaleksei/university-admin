@@ -1,12 +1,13 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import AdminUsers from '@/components/AdminUsers.vue'
+import MainPage from '@/components/MainPage.vue'
 import Authorization from '@/components/Authorization.vue'
 
 const routes = [
   {
     path: '/',
     name: '',
-    component: AdminUsers
+    component: MainPage
   },
   {
     path: '/admin',
@@ -14,8 +15,8 @@ const routes = [
     component: AdminUsers
   },
   {
-    path: '/authorization',
-    name: 'Authorization',
+    path: '/login',
+    name: 'login',
     component: Authorization
   },
 

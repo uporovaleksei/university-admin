@@ -4,7 +4,7 @@
     <br>
     <router-link to="/admin">Admin</router-link>
 <br>
-    <router-link to="/authorization">Auth</router-link>
+    <router-link to="/login">Auth</router-link>
   </nav>
   <router-view/>
 </template>

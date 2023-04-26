@@ -13,8 +13,8 @@
       <tbody>
         <tr v-for="user in users" :key="user.id">
           <td>{{ user.id }}</td>
-          <td>{{ user.name }}</td>
-          <td>{{ user.email }}</td>
+          <td>{{ user.login }}</td>
+          <td>{{ user.password }}</td>
           <td>
             <button @click="editUser(user.id)">Edit</button>
             <button @click="deleteUser(user.id)">Delete</button>
@@ -25,8 +25,8 @@
     <div v-if="editing">
       <h2>Edit User</h2>
       <form @submit.prevent="saveUser">
-        <input type="text" v-model="name">
-        <input type="email" v-model="email">
+        <input type="text" v-model="login">
+        <input type="email" v-model="password">
         <button type="submit">Save</button>
       </form>
     </div>
@@ -41,8 +41,8 @@ export default {
       users: [],
       editing: false,
       id: null,
-      name: '',
-      email: ''
+      login: '',
+      password: ''
     }
   },
   async created() {
@@ -53,11 +53,11 @@ export default {
       const user = this.users.find(user => user.id === id)
       this.editing = true
       this.id = user.id
-      this.name = user.name
-      this.email = user.email
+      this.login = user.login
+      this.password = user.password
     },
 			async getUsers(){
-      this.items = await api.get('/admin')
+      this.users = await api.get('/admin')
     },
 	}
 }

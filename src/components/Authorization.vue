@@ -49,7 +49,8 @@ export default {
         alert(data.error);
         return;
       }
-      this.$router.push({ name: "/admin" });
+      this.$router.push({ path: "/" });
+      console.log("Suscces");
     },
   },
 };
@@ -99,7 +100,7 @@ export default {
   }
 }
 
-.auth__password {}
+
 
 .auth__submit {
   width: 100%;

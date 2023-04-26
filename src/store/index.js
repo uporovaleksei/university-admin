@@ -18,23 +18,23 @@ export default createStore({
   },
   actions: {
     async login(context, payload){
-      const data = await api.post("user/login", payload)
+      const data = await api.post("/login", payload)
       if(data.error)
         return data
       context.commit("setUser", data)
     },
     async logout(context){
-      await api.post("user/logout")
+      await api.post("/logout")
       context.commit("forgetUser")
     },
     async reg(context, payload){
-      const data = await api.post("user/reg", payload)
+      const data = await api.post("/reg", payload)
       if(data.error)
         return data
       context.commit("setUser", data)
     },
     async refresh(context){
-      const user = await api.get("user/refresh")
+      const user = await api.get("/refresh")
       if(user.error)
         return user
       context.commit("setUser", user)
