@@ -49,7 +49,7 @@ export default {
         alert(data.error);
         return;
       }
-      this.$router.push({ path: "/" });
+      this.$router.push({ path: "/main" });
       console.log("Suscces");
     },
   },
@@ -84,14 +84,14 @@ export default {
 }
 
 .auth__title h1 {
-  color: #476160;
+  color: var(--blue);
   font-size: 2rem;
 }
 
 .reg__login input,
 .reg__password input {
   padding: 10px 25px;
-  border: 1px solid #476160;
+  border: 1px solid var(--blue);
   outline: none;
 
   &:focus {
@@ -106,7 +106,7 @@ export default {
   width: 100%;
 
   button {
-    background: #476160;
+    background: var(--blue);;
     color: #fff;
     font-weight: 500;
     border: 0;
@@ -115,7 +115,7 @@ export default {
     transition: 0.3s ease;
 
     &:hover {
-      background: #476160d7;
+      background: var(--blue);
     }
 
     &:active {

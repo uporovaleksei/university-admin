@@ -1,12 +1,6 @@
 <template>
-  <nav>
-    <router-link to="/">Home</router-link> |
-    <br>
-    <router-link to="/admin">Admin</router-link>
-<br>
-    <router-link to="/login">Auth</router-link>
-  </nav>
-  <router-view/>
+<router-view>
+</router-view>
 </template>
 
 <style lang="scss">

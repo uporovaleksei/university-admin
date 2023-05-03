@@ -1,6 +1,6 @@
 import { createStore } from 'vuex'
 
-import api from '@/api'
+import api from '@/utils/api'
 import router from "../router"
 
 export default createStore({
