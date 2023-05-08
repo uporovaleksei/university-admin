@@ -67,7 +67,6 @@ import Main from "@/layouts/Main.vue"
     
     <div class="card__wrapper">
       <div class="card__container">
-        <span v-if="person.id == 8"></span>
         <div class="card">
           <div class="info">
             <h2>{{ person.name }}</h2>

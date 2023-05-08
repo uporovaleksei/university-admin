@@ -1,0 +1,26 @@
+name: Build
+on:
+  workflow_run:
+    workflows: ['Make pull']
+    types:
+      - completed
+
+jobs:
+  admin:
+    name: admin
+    runs-on: ubuntu-latest
+    steps:
+      - name: Build admin
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.IP }}
+          username: user
+          password: ${{ secrets.PASSWORD }}
+          port: 666
+          script: |
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+            cd university-admin
+            npm i
+            cp .env.prod .env
+            npm run build
