@@ -8,10 +8,10 @@ const client = axios.create({
 })
 
 client.interceptors.response.use(
-  (response) => {
+  response => {
     return response.data
   },
-  (error) => {
+  error => {
     console.log(error)
     if (error.response.status === 403) {
       store.dispatch('logout')

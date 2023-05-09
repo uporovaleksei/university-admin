@@ -25,8 +25,8 @@
     <div v-if="editing">
       <h2>Edit User</h2>
       <form @submit.prevent="saveUser">
-        <input type="text" v-model="login">
-        <input type="email" v-model="password">
+        <input type="text" v-model="login" />
+        <input type="email" v-model="password" />
         <button type="submit">Save</button>
       </form>
     </div>
@@ -42,7 +42,7 @@ export default {
       editing: false,
       id: null,
       login: '',
-      password: ''
+      password: '',
     }
   },
   async created() {
@@ -56,9 +56,9 @@ export default {
       this.login = user.login
       this.password = user.password
     },
-			async getUsers(){
+    async getUsers() {
       this.users = await api.get('/admin')
     },
-	}
+  },
 }
 </script>

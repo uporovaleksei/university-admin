@@ -1,59 +1,50 @@
 <template>
   <div>
-      <div class="auth">
-        <div class="auth__container">
-          <div class="auth__body">
-            <div class="auth__title">
-              <h1>Авторизация</h1>
-            </div>
-            <div class="reg__login">
-              <input 
-                type="text"  
-                placeholder="Логин"
-                v-model="user"
-              >
-            </div>
-            <div class="reg__password">
-              <input 
-                type="password" 
-                placeholder="Пароль"
-                v-model="password"
-              >
-            </div>
-            <div class="auth__submit">
-              <button @click="login">Войти</button>
-            </div>
+    <div class="auth">
+      <div class="auth__container">
+        <div class="auth__body">
+          <div class="auth__title">
+            <h1>Авторизация</h1>
+          </div>
+          <div class="reg__login">
+            <input type="text" placeholder="Логин" v-model="user" />
+          </div>
+          <div class="reg__password">
+            <input type="password" placeholder="Пароль" v-model="password" />
+          </div>
+          <div class="auth__submit">
+            <button @click="login">Войти</button>
           </div>
         </div>
       </div>
+    </div>
   </div>
 </template>
 
 <script>
-
 export default {
-  name: "Authorization",
+  name: 'Authorization',
   data() {
     return {
       user: null,
       password: null,
-    };
+    }
   },
   methods: {
     async login() {
-      const data = await this.$store.dispatch("login", {
+      const data = await this.$store.dispatch('login', {
         login: this.user,
         password: this.password,
-      });
+      })
       if (data?.error) {
-        alert(data.error);
-        return;
+        alert(data.error)
+        return
       }
-      this.$router.push({ path: "/main" });
-      console.log("Suscces");
+      this.$router.push({ path: '/lections' })
+      console.log('Suscces')
     },
   },
-};
+}
 </script>
 
 <style lang="scss">
@@ -100,13 +91,11 @@ export default {
   }
 }
 
-
-
 .auth__submit {
   width: 100%;
 
   button {
-    background: var(--blue);;
+    background: var(--blue);
     color: #fff;
     font-weight: 500;
     border: 0;

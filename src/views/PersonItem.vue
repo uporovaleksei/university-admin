@@ -1,100 +1,119 @@
 <script>
-import api from "@/utils/api"
+import api from '@/utils/api'
 import imgLink from '@/utils/imgLink'
-import Main from "@/layouts/Main.vue"
-  export default {
-      components: {
+import Tiptap from '@/components/Tiptap.vue'
+import { fileUploadMixin } from '@/utils/fileUploadMixin.js'
+import Main from '@/layouts/Main.vue'
+
+export default {
+  components: {
     Main,
+    Tiptap,
   },
+  mixins: [fileUploadMixin],
   data() {
     return {
-			persons:[],
+      person: [],
       imgLink: imgLink,
-      show:false,
-      tbname:"persons",
-      name:null,
-      format:null,
-      data:null,
-      priority:null,
-      image:null,
-      img_id:null,
+      show: false,
+      tbname: 'persons',
+      name: null,
+      format: null,
+      data: null,
+      priority: null,
+      image: null,
+      img_id: null,
       description: {
-        "Должность": '',
-        "Ученая степень":'',
-        "Ученое звание":'',
+        Должность: '',
+        'Ученая степень': '',
+        'Ученое звание': '',
       },
-      interview:null,
-      preview:null,
-      showChange:false,
-      changedId:-1,
-      changeImage:null,
-      changeName:null,
-      id:null,
+      interview: null,
+      preview: null,
+      showChange: false,
+      changedId: -1,
+      changeImage: null,
+      changeName: null,
+      changeData: null,
+      changeFormat: null,
+      changeDescription: {
+        Должность: '',
+        'Ученая степень': '',
+        'Ученое звание': '',
+      },
+      changeInterview: null,
+      id: null,
     }
   },
-    created(){
-    this.getPeson()
+  created() {
+    this.getPerson()
   },
-
+  computed: {
+    isAdmin() {
+      return this.$store.state.user?.is_admin
+    },
+  },
   methods: {
-    async getPeson(){
-      this.person = await api.get('/person/'+ this.$route.params.id)
+    async getPerson() {
+      this.person = await api.get('/person/' + this.$route.params.id)
     },
-        async updatePeson(id){
-      await api.put("persons/"+ id, {
-        id:id,
-        image:this.changeImage,
-        name:this.changeName,
-        status:this.changeStatus,
-        phone:this.changePhone,
-        email:this.changeEmail,
-      },
-      )
-    this.$router.go(0);
+    async updatePerson() {
+      console.log(this.changeInterview)
+      await api.put('persons/' + this.$route.params.id, {
+        id: this.$route.params.id,
+        name: this.changeName,
+        description: this.changeDescription,
+        img: { data: this.data, format: this.format },
+        interview: this.changeInterview,
+      })
+      location.reload()
     },
-         change(index, item){
+    change(index, person) {
       this.changedId = index
-      this.changeName = item.name
-      this.changeStatus = item.status
-      this.changePhone = item.phone
-      this.changeEmail = item.email
+      this.changeName = person.name
+      this.changeDescription = person.description
+      this.changeInterview = person.interview
     },
   },
-  }
+}
 </script>
+
 <template>
   <Main>
-    
+    <div class="changeButton">
+      <button class="changeBtn" @click="change(index, person)">O</button>
+    </div>
     <div class="card__wrapper">
       <div class="card__container">
         <div class="card">
+          <button @click="updatePerson(person.id)" v-if="changedId === index" class="sendBtn">Подтвердить</button>
           <div class="info">
             <h2>{{ person.name }}</h2>
+            <input type="text" v-model="changeName" v-if="changedId === index" />
             <div v-for="(key, headers) in person.description" :key="headers">
               <p>{{ key }}</p>
+              <input :key="headers" type="text" v-model="changeDescription[headers]" v-if="changedId === index" />
             </div>
           </div>
           <img class="img" :src="imgLink(person)" />
         </div>
+        <input type="file" v-if="changedId === index" @change="handleFileUpload" />
       </div>
     </div>
-
+    <Tiptap v-model="changeInterview" v-if="changedId === index" />
     <div class="container">
       <div class="interview">
         <div class="btn" @click="show = !show">
           <h2>Интервью</h2>
-					<button>></button>
-
+          <button>></button>
         </div>
-
-        <Transition name="slide-fade">
-          <div class="text"  v-html="person.interview"></div>
-        </Transition>
+        <transition name="slide-fade">
+          <div class="text" v-html="person.interview"></div>
+        </transition>
       </div>
     </div>
   </Main>
 </template>
-
 <style lang="scss" scoped>
 .card__wrapper {
   width: 100%;

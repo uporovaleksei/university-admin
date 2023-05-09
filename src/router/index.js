@@ -1,6 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import AdminUsers from '@/components/AdminUsers.vue'
-import MainPage from '@/views/MainPage.vue'
 import LectionPage from '@/views/LectionPage.vue'
 import LectionItem from '@/views/LectionItem.vue'
 import StoriesPage from '@/views/StoriesPage.vue'
@@ -14,64 +13,58 @@ const routes = [
   {
     path: '/',
     name: 'Authorization',
-    component: Authorization
+    component: Authorization,
   },
   {
     path: '/lections',
     name: 'lections',
-    component: LectionPage
+    component: LectionPage,
   },
   {
     path: '/lections/:id',
     name: 'lection',
-    component: LectionItem
+    component: LectionItem,
   },
   {
     path: '/stories',
     name: 'stories',
-    component: StoriesPage
+    component: StoriesPage,
   },
   {
     path: '/stories/:id',
     name: 'storie',
-    component: StorieItem
+    component: StorieItem,
   },
   {
     path: '/persons',
     name: 'persons',
-    component: PersonsPage
+    component: PersonsPage,
   },
   {
     path: '/persons/:id',
     name: 'person',
-    component: PersonItem
-  },
-  {
-    path: '/main',
-    name: 'MainPage',
-    component: MainPage
+    component: PersonItem,
   },
   {
     path: '/about',
     name: 'AboutUs',
-    component: AboutUs
+    component: AboutUs,
   },
   {
     path: '/admin',
     name: 'admin',
-    component: AdminUsers
+    component: AdminUsers,
   },
   {
     path: '/login',
     name: 'login',
-    component: Authorization
+    component: Authorization,
   },
-
 ]
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
-  routes
+  routes,
 })
 
 export default router

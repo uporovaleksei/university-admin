@@ -1,44 +1,99 @@
 <script>
-import api from "@/utils/api"
+import api from '@/utils/api'
 import imgLink from '@/utils/imgLink'
+import DeleteBtn from '@/components/DeleteBtn.vue'
+import Main from '@/layouts/Main.vue'
+import { fileUploadMixin } from '@/utils/fileUploadMixin.js'
 
-import Main from "@/layouts/Main.vue"
-  export default {
-      components: {
+export default {
+  components: {
     Main,
+    DeleteBtn,
   },
+  mixins: [fileUploadMixin],
   data() {
     return {
-      id:null,
-			priority:null,
-			title:null,
-			img_id:null,
-			path:null,
-			duration:null,
-			description:null,
-      lectoins:null,
-			stories:[],
-      imgLink: imgLink
+      id: null,
+      priority: null,
+      title: null,
+      path: null,
+      duration: null,
+      show: false,
+      stories: null,
+      storie: [],
+      tbname: 'stories',
+      format: null,
+      data: null,
+      img_id: null,
+      preview: null,
+      imgLink: imgLink,
     }
   },
-    created(){
+  created() {
     this.getStories()
   },
 
   methods: {
-    async getStories(){
+    async getStories() {
       this.stories = await api.get('/stories')
-			console.log(this.items);
+    },
+    async createStories() {
+      await api.post('stories', {
+        title: this.title,
+        img: { data: this.data, format: this.format },
+        duration: this.duration,
+        path: this.path,
+      })
+      this.$router.go(0)
+    },
+    async uploadFile(event) {
+      const files = Array.from(event.target.files)
+      const file = files[0]
+      this.path = process.env.VUE_APP_SERVER_URL + file.name
+      console.log(this.path)
+      event.preventDefault()
+      const formData = new FormData()
+      formData.append('file', event.target.files[0])
+      try {
+        await api.post('/upload', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        })
+        alert('File uploaded successfully')
+      } catch (error) {
+        console.error(error)
+        alert('Error uploading file')
+      }
     },
   },
-  }
+}
 </script>
 <template>
   <Main>
     <div class="container">
+      <button @click="show = !show" class="btn__create">
+        {{ show ? 'Закрыть' : 'Создать' }}
+      </button>
+      <div class="add__video" v-if="show">
+        <form enctype="multipart/form-data">
+          <input type="file" name="file" @change="uploadFile" />
+        </form>
+        <input type="text" placeholder="Заголовок" v-model="title" />
+        <input type="text" placeholder="Длительность" v-model="duration" />
+        <div class="create__image">
+          <label for="input">Превью</label>
+          <input type="file" multiple="false" placeholder="Изображение" @change="handleFileUpload" />
+          <div class="preview">
+            <img alt="" :src="preview" />
+          </div>
+          <button @click="createStories" class="create__storie">Добавить</button>
+        </div>
+      </div>
       <h1>{{ title }}</h1>
       <div class="cards">
         <div class="card" v-for="(item, index) in stories" :key="index">
+          <DeleteBtn :id="item.id" :name="tbname" class="DeleteButton" />
           <router-link :to="'/stories/' + item.id">
             <div class="image">
               <img class="img" :src="imgLink(item)" />
@@ -48,8 +103,7 @@ import Main from "@/layouts/Main.vue"
               <div class="title">
                 <h2>{{ item.title.split(' ').slice(0, 3).join(' ') + '....' }}</h2>
               </div>
-              <div class="text">
-              </div>
+              <div class="text"></div>
             </div>
           </router-link>
         </div>
@@ -66,6 +120,31 @@ import Main from "@/layouts/Main.vue"
   width: 60%;
   margin: 0 auto;
   padding-bottom: 400px;
+  .btn__create {
+    align-self: flex-end;
+  }
+  .add__video {
+    align-self: flex-end;
+    display: flex;
+    flex-direction: column;
+
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 20px;
+    padding: 30px 0;
+    .create__storie {
+      align-self: flex-end;
+    }
+    .create__image {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 10px;
+      img {
+        width: 400px;
+      }
+    }
+  }
   h1 {
     padding-top: 120px;
     font-weight: 700;

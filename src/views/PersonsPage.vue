@@ -1,149 +1,119 @@
 <script>
-import api from "@/utils/api"
+import api from '@/utils/api'
 import imgLink from '@/utils/imgLink'
-import Tiptap from "@/components/Tiptap.vue"
-import DeleteBtn from "@/components/DeleteBtn.vue"
-import Main from "@/layouts/Main.vue"
-  export default {
-      components: {
+import Tiptap from '@/components/Tiptap.vue'
+import DeleteBtn from '@/components/DeleteBtn.vue'
+import { fileUploadMixin } from '@/utils/fileUploadMixin.js'
+import Main from '@/layouts/Main.vue'
+export default {
+  components: {
     Main,
     Tiptap,
-    DeleteBtn
+    DeleteBtn,
   },
+  mixins: [fileUploadMixin],
   data() {
     return {
-			persons:[],
+      persons: [],
       imgLink: imgLink,
-      show:false,
-      tbname:"persons",
-      name:null,
-      format:null,
-      data:null,
-      priority:null,
-      image:null,
-      img_id:null,
+      show: false,
+      tbname: 'persons',
+      name: null,
+      format: null,
+      data: null,
+      priority: null,
+      image: null,
+      img_id: null,
       description: {
-        "Должность": '',
-        "Ученая степень":'',
-        "Ученое звание":'',
+        Должность: '',
+        'Ученая степень': '',
+        'Ученое звание': '',
       },
-      interview:null,
-      preview:null,
-      showChange:false,
-      changedId:-1,
-      changeImage:null,
-      changeName:null,
-      id:null,
+      interview: null,
+      preview: null,
+      showChange: false,
+      changedId: -1,
+      changeImage: null,
+      changeName: null,
+      id: null,
     }
   },
-    created(){
+  created() {
     this.getPersons()
   },
 
-    methods: {
+  methods: {
     async createPersons() {
-      await api.post("persons", { name: this.name, img: {data: this.data, format: this.format}, description: this.description, interview: this.interview,})
-      this.$router.go(0);
+      await api.post('persons', {
+        name: this.name,
+        img: { data: this.data, format: this.format },
+        description: this.description,
+        interview: this.interview,
+      })
+      this.$router.go(0)
     },
     async getPersons() {
       this.persons = await api.get('/persons')
     },
-    handleFileUpload(event) {
-      const files = Array.from(event.target.files)
-      const file = files[0]
-      this.format = file.name.match(/\.([^.]+)$/)[1]
-      const reader = new FileReader()
-      reader.onload = ev => {
-        const src = ev.target.result
-        this.preview = src
-        this.data = reader.result
-      }
-      reader.readAsDataURL(file)
-    },
-    ChangehandleFileUpload(event) {
-      const files = Array.from(event.target.files)
-      const file = files[0]
-
-      const reader = new FileReader()
-      reader.onload = ev => {
-        const src = ev.target.result
-        this.changeImage = src
-      }
-      reader.readAsDataURL(file)
-    },
-
   },
-    computed: {
-    isAdmin(){
+  computed: {
+    isAdmin() {
       return this.$store.state.user?.is_admin
-    }
+    },
   },
-  }
+}
 </script>
 <template>
   <Main>
-    <div class="government__create__container"
-        >
-        <div class="government__create">
-            <button
-            @click="show =!show"
-            >
-            {{ show ? 'Закрыть' : 'Создать' }}</button>
-        </div>
-        <transition name="slide-fade">
-        <div class="create__card" v-if="show">
-            <div class="create__title">
-                <input 
-                type="text" 
-                placeholder="ФИО"
-                v-model="name"
-                >
-                <input v-for="(value, key) in description" 
-                  :key="key"
-                  type="text" 
-                  :placeholder="key"
-                  v-model="description[key]"
-                >
-            </div>
-            <div class="create__image">
-              <label for="input">Контактная информация</label>
-              <input type="file" 
-                  multiple = "false"
-                  placeholder="Изображение"
-                  @change = "handleFileUpload"
-                >
-                <div class="preview">
-                  <img alt="" :src ="preview">
-                </div>
-            </div>
-            <Tiptap v-model="interview"/>
-            <div class="accept__btn">
-                <button @click="createPersons">Добавить</button>
-            </div>
-        </div>
-        </transition>
+    <div class="person__create__container">
+      <div class="person__create">
+        <button @click="show = !show">
+          {{ show ? 'Закрыть' : 'Создать' }}
+        </button>
       </div>
-  <div class="container">
-    <h1>Наши наставники</h1>
-    <div class="cards">
-      <div class="card" v-for="item in persons" :key="item.id">
-        <DeleteBtn
-            :id="item.id" 
-            :name="tbname"
-            class="DeleteButton"
+      <transition name="slide-fade">
+        <div class="create__card" v-if="show">
+          <div class="create__title">
+            <input type="text" placeholder="ФИО" v-model="name" />
+            <input
+              v-for="(value, key) in description"
+              :key="key"
+              type="text"
+              :placeholder="key"
+              v-model="description[key]"
             />
-        <router-link :to="'/persons/' + item.id">
-          <div class="image">
-            <img class="img" :src="imgLink(item)" />
           </div>
-          <div class="text">
-            <h2>{{ item.name }}</h2>
-            <!-- <p>{{ item.description?.['Должность'] }}</p> -->
+          <div class="create__image">
+            <label for="input">Контактная информация</label>
+            <input type="file" multiple="false" placeholder="Изображение" @change="handleFileUpload" />
+            <div class="preview">
+              <img alt="" :src="preview" />
+            </div>
           </div>
-        </router-link>
+          <Tiptap v-model="interview" />
+          <div class="accept__btn">
+            <button @click="createPersons">Добавить</button>
+          </div>
+        </div>
+      </transition>
+    </div>
+    <div class="container">
+      <h1>Наши наставники</h1>
+      <div class="cards">
+        <div class="card" v-for="item in persons" :key="item.id">
+          <DeleteBtn :id="item.id" :name="tbname" class="DeleteButton" />
+          <router-link :to="'/persons/' + item.id">
+            <div class="image">
+              <img class="img" :src="imgLink(item)" />
+            </div>
+            <div class="text">
+              <h2>{{ item.name }}</h2>
+              <!-- <p>{{ item.description?.['Должность'] }}</p> -->
+            </div>
+          </router-link>
+        </div>
       </div>
     </div>
-  </div>
   </Main>
 </template>
 
@@ -204,7 +174,6 @@ import Main from "@/layouts/Main.vue"
       }
       &:hover::after {
         opacity: 1;
-
       }
       .text {
         z-index: 5;
@@ -280,40 +249,40 @@ import Main from "@/layouts/Main.vue"
 }
 </style>
 <style scoped>
-.changeButton{
+.changeButton {
   align-self: flex-start;
 }
-.DeleteButton{
+.DeleteButton {
   align-self: flex-start;
 }
-.government {
+.person {
   margin: 120px 0;
 }
-.government__container {
+.person__container {
   width: 80%;
   margin: 0 auto;
 }
-.government__title h1{
+.person__title h1 {
   font-size: 2rem;
   color: var(--blue);
   font-weight: 600;
 }
-.government__body {
+.person__body {
   margin: 40px auto;
   display: flex;
   flex-direction: column;
   gap: 40px;
 }
 
-.government__item {
+.person__item {
   display: flex;
   gap: 20px;
 }
-.government__item h2{
+.person__item h2 {
   font-size: 1.2rem;
   color: var(--blue);
 }
-.government__photo{
+.person__photo {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -321,35 +290,38 @@ import Main from "@/layouts/Main.vue"
   width: 300px;
   background: var(--blue);
 }
-.government__photo input{
+.person__photo input {
   width: 100%;
   background: #ffffff;
   border: var(--blue) 2px solid;
   margin: 0;
 }
-.government__photo img{
+.person__photo img {
   width: 300px;
   height: 100%;
 
   border: var(--blue) 2px solid;
 }
-.government__photo p{
+.person__photo p {
   font-size: 2rem;
   color: #fff;
   font-weight: 500;
 }
-.government__name, .government__status, .government___phone, .government__email{
+.person__name,
+.person__status,
+.person___phone,
+.person__email {
   display: flex;
   align-items: baseline;
   gap: 10px;
 }
-.government__info {
+.person__info {
   display: flex;
   flex-direction: column;
   justify-content: space-around;
   gap: 20px;
 }
-.government__create__container{
+.person__create__container {
   width: 60%;
   margin: 160px auto 0 auto;
 
@@ -357,14 +329,14 @@ import Main from "@/layouts/Main.vue"
   flex-direction: column;
   align-items: flex-end;
 }
-.create__card{
+.create__card {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 40px;
   width: 100%;
 }
-.government__create button{
+.person__create button {
   margin: 20px 0;
   padding: 10px 25px;
   background: var(--blue);
@@ -372,13 +344,13 @@ import Main from "@/layouts/Main.vue"
   border-radius: 50px;
   transition: 0.3s ease;
 }
-.government__create button:hover{
- background: var(--blue);
+.person__create button:hover {
+  background: var(--blue);
 }
-.government__create button:active{
- transform: scale(0.9);
+.person__create button:active {
+  transform: scale(0.9);
 }
-.accept__btn button{
+.accept__btn button {
   margin: 20px 0;
   padding: 10px 25px;
   background: var(--blue);
@@ -387,14 +359,14 @@ import Main from "@/layouts/Main.vue"
   border-radius: 0;
   transition: 0.3s ease;
 }
-.accept__btn button:hover{
+.accept__btn button:hover {
   border-radius: 50px;
   background: var(--blue);
 }
-.accept__btn button:active{
- transform: translateY(-5px);
+.accept__btn button:active {
+  transform: translateY(-5px);
 }
-.create__image{
+.create__image {
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -402,7 +374,10 @@ import Main from "@/layouts/Main.vue"
   justify-content: flex-start;
   gap: 20px;
 }
-.create__image input{
+.create__image img {
+  width: 400px;
+}
+.create__image input {
   width: 50%;
   padding: 10px;
   outline: none;
@@ -415,27 +390,26 @@ import Main from "@/layouts/Main.vue"
   flex-direction: column;
   gap: 10px;
 }
-.create__title input{
+.create__title input {
   width: 50%;
   padding: 10px;
   outline: none;
   border: 1px solid var(--blue);
 }
-.create__title input:focus{
-border: 1px solid #60a5a3;
+.create__title input:focus {
+  border: 1px solid #60a5a3;
 }
 .slide-fade-enter-active {
   transition: all 0.3s;
 }
 .slide-fade-leave-active {
-  transition: all .3s;
+  transition: all 0.3s;
 }
 .slide-fade-leave-to
 /* .slide-fade-leave-active до версии 2.1.8 */ {
- opacity: 0;
-
+  opacity: 0;
 }
-.slide-fade-enter{
+.slide-fade-enter {
   opacity: 0;
 }
 </style>

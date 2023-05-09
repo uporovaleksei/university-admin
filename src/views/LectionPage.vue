@@ -1,44 +1,108 @@
 <script>
-import api from "@/utils/api"
+import api from '@/utils/api'
 import imgLink from '@/utils/imgLink'
-
-import Main from "@/layouts/Main.vue"
-  export default {
-      components: {
+import DeleteBtn from '@/components/DeleteBtn.vue'
+import { fileUploadMixin } from '@/utils/fileUploadMixin.js'
+import Main from '@/layouts/Main.vue'
+export default {
+  components: {
     Main,
+    DeleteBtn,
   },
+  mixins: [fileUploadMixin],
   data() {
     return {
-      id:null,
-			priority:null,
-			title:null,
-			img_id:null,
-			path:null,
-			duration:null,
-			description:null,
-      lectoins:null,
-			lections:[],
-      imgLink: imgLink
+      id: null,
+      priority: null,
+      title: null,
+      path: null,
+      duration: null,
+      description: {
+        Описание: '',
+      },
+      show: false,
+      lectoins: null,
+      lections: [],
+      tbname: 'lections',
+      format: null,
+      data: null,
+      img_id: null,
+      preview: null,
+      imgLink: imgLink,
     }
   },
-    created(){
+  created() {
     this.getLections()
   },
 
   methods: {
-    async getLections(){
+    async getLections() {
       this.lections = await api.get('/lections')
-			console.log(this.items);
+      console.log(this.items)
+    },
+    async createLection() {
+      await api.post('lections', {
+        title: this.title,
+        img: { data: this.data, format: this.format },
+        duration: this.duration,
+        path: this.path,
+      })
+      this.$router.go(0)
+    },
+    async uploadFile(event) {
+      const files = Array.from(event.target.files)
+      const file = files[0]
+      this.path = process.env.VUE_APP_SERVER_URL + file.name
+      console.log(this.path)
+      event.preventDefault()
+      const formData = new FormData()
+      formData.append('file', event.target.files[0])
+      try {
+        await api.post('/upload', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        })
+        alert('File uploaded successfully')
+      } catch (error) {
+        console.error(error)
+        alert('Error uploading file')
+      }
     },
   },
-  }
+}
 </script>
 <template>
   <Main>
     <div class="container">
-      <h1>{{ title }}</h1>
+      <button @click="show = !show" class="btn__create">
+        {{ show ? 'Закрыть' : 'Создать' }}
+      </button>
+      <div class="add__video" v-if="show">
+        <form enctype="multipart/form-data">
+          <input type="file" name="file" @change="uploadFile" />
+        </form>
+        <input type="text" placeholder="Заголовок" v-model="title" />
+        <input
+          v-for="(value, key) in description"
+          :key="key"
+          type="text"
+          :placeholder="key"
+          v-model="description[key]"
+        />
+        <input type="text" placeholder="Длительность" v-model="duration" />
+        <div class="create__image">
+          <label for="input">Превью</label>
+          <input type="file" multiple="false" placeholder="Изображение" @change="handleFileUpload" />
+          <div class="preview">
+            <img alt="" :src="preview" />
+          </div>
+          <button @click="createLection" class="create__lection">Добавить</button>
+        </div>
+      </div>
       <div class="cards">
         <div class="card" v-for="(item, index) in lections" :key="index">
+          <DeleteBtn :id="item.id" :name="tbname" class="DeleteButton" />
           <router-link :to="'/lections/' + item.id">
             <div class="image">
               <img class="img" :src="imgLink(item)" />
@@ -46,7 +110,9 @@ import Main from "@/layouts/Main.vue"
             </div>
             <div class="info">
               <div class="title">
-                <h2>{{ item.title.split(' ').slice(0, 3).join(' ') + '....' }}</h2>
+                <h2>
+                  {{ item.title.split(' ').slice(0, 3).join(' ') + '....' }}
+                </h2>
               </div>
               <div class="text">
                 <p>
@@ -66,9 +132,37 @@ import Main from "@/layouts/Main.vue"
   background: red;
 }
 .container {
-  width: 60%;
+  width: 80%;
   margin: 0 auto;
   padding-bottom: 400px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  .btn__create {
+    align-self: flex-end;
+  }
+  .add__video {
+    align-self: flex-end;
+    display: flex;
+    flex-direction: column;
+
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 20px;
+    padding: 30px 0;
+    .create__lection {
+      align-self: flex-end;
+    }
+    .create__image {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 10px;
+      img {
+        width: 400px;
+      }
+    }
+  }
   h1 {
     padding-top: 120px;
     font-weight: 700;
@@ -78,8 +172,11 @@ import Main from "@/layouts/Main.vue"
   }
   .cards {
     display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
     margin: 60px 0;
     gap: 30px;
+    flex-wrap: wrap;
     .card {
       width: 370px;
       height: 415px;
