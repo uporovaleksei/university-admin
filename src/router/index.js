@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import AdminUsers from '@/components/AdminUsers.vue'
 import LectionPage from '@/views/LectionPage.vue'
 import LectionItem from '@/views/LectionItem.vue'
 import StoriesPage from '@/views/StoriesPage.vue'
@@ -49,11 +48,6 @@ const routes = [
     path: '/about',
     name: 'AboutUs',
     component: AboutUs,
-  },
-  {
-    path: '/admin',
-    name: 'admin',
-    component: AdminUsers,
   },
   {
     path: '/login',

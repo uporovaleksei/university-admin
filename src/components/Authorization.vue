@@ -54,7 +54,7 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  background: linear-gradient(#293636bd, #293636bd) no-repeat;
+  background:#fff;
 }
 
 .auth__container {
@@ -64,7 +64,7 @@ export default {
 }
 
 .auth__body {
-  background: #d3e1e0;
+  background: var(--blue);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -75,14 +75,14 @@ export default {
 }
 
 .auth__title h1 {
-  color: var(--blue);
+  color: #fff;
   font-size: 2rem;
 }
 
 .reg__login input,
 .reg__password input {
   padding: 10px 25px;
-  border: 1px solid var(--blue);
+  border: 1px solid #fff;
   outline: none;
 
   &:focus {
@@ -95,8 +95,8 @@ export default {
   width: 100%;
 
   button {
-    background: var(--blue);
-    color: #fff;
+    background: #fff;
+    color: #000;
     font-weight: 500;
     border: 0;
     width: 100%;
@@ -104,7 +104,7 @@ export default {
     transition: 0.3s ease;
 
     &:hover {
-      background: var(--blue);
+      background: #ffffffa4;
     }
 
     &:active {

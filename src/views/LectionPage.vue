@@ -80,9 +80,18 @@ export default {
       </button>
       <div class="add__video" v-if="show">
         <form enctype="multipart/form-data">
+          <label for="input">
+            Загрузить видео
+          </label>
           <input type="file" name="file" @change="uploadFile" />
         </form>
+                  <label for="input">
+            Заголовок видео
+          </label>
         <input type="text" placeholder="Заголовок" v-model="title" />
+                          <label for="input">
+            Описание и длительность для видео
+          </label>
         <input
           v-for="(value, key) in description"
           :key="key"
@@ -92,12 +101,12 @@ export default {
         />
         <input type="text" placeholder="Длительность" v-model="duration" />
         <div class="create__image">
-          <label for="input">Превью</label>
+          <label for="input">Превью для видео</label>
           <input type="file" multiple="false" placeholder="Изображение" @change="handleFileUpload" />
           <div class="preview">
             <img alt="" :src="preview" />
           </div>
-          <button @click="createLection" class="create__lection">Добавить</button>
+          <button @click="createLection" class="create__lection">Загрузить</button>
         </div>
       </div>
       <div class="cards">
@@ -139,10 +148,12 @@ export default {
   flex-direction: column;
   align-items: center;
   .btn__create {
-    align-self: flex-end;
+    margin: 20px;
+    align-self: flex-start;
   }
   .add__video {
-    align-self: flex-end;
+    margin: 20px;
+    align-self: flex-start;
     display: flex;
     flex-direction: column;
 
@@ -151,7 +162,7 @@ export default {
     gap: 20px;
     padding: 30px 0;
     .create__lection {
-      align-self: flex-end;
+      align-self: flex-start;
     }
     .create__image {
       display: flex;
@@ -179,17 +190,13 @@ export default {
     flex-wrap: wrap;
     .card {
       width: 370px;
-      height: 415px;
-      background: #d9d9d9;
-      box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.5);
+      background: transparent;
       display: flex;
       flex-direction: column;
-      align-items: center;
       border-radius: 10px;
       transition: 0.3s ease all;
       &:hover {
         transform: scale(1.05);
-        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5);
       }
       a {
         width: 370px;
