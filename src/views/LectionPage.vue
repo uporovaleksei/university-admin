@@ -80,18 +80,12 @@ export default {
       </button>
       <div class="add__video" v-if="show">
         <form enctype="multipart/form-data">
-          <label for="input">
-            Загрузить видео
-          </label>
+          <label for="input"> Загрузить видео </label>
           <input type="file" name="file" @change="uploadFile" />
         </form>
-                  <label for="input">
-            Заголовок видео
-          </label>
+        <label for="input"> Заголовок видео </label>
         <input type="text" placeholder="Заголовок" v-model="title" />
-                          <label for="input">
-            Описание и длительность для видео
-          </label>
+        <label for="input"> Описание для видео </label>
         <input
           v-for="(value, key) in description"
           :key="key"
@@ -99,6 +93,7 @@ export default {
           :placeholder="key"
           v-model="description[key]"
         />
+        <label for="input"> Длительность видео </label>
         <input type="text" placeholder="Длительность" v-model="duration" />
         <div class="create__image">
           <label for="input">Превью для видео</label>
@@ -156,11 +151,21 @@ export default {
     align-self: flex-start;
     display: flex;
     flex-direction: column;
-
     justify-content: flex-start;
     align-items: flex-start;
     gap: 20px;
     padding: 30px 0;
+    form{
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+        input {
+      width: 100%;
+      padding: 10px;
+      outline: none;
+      border: 1px solid var(--blue);
+    }
     .create__lection {
       align-self: flex-start;
     }

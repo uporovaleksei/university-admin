@@ -2,7 +2,6 @@
 import api from '@/utils/api'
 import imgLink from '@/utils/imgLink'
 import Tiptap from '@/components/Tiptap.vue'
-import { fileUploadMixin } from '@/utils/fileUploadMixin.js'
 import Main from '@/layouts/Main.vue'
 
 export default {
@@ -10,7 +9,6 @@ export default {
     Main,
     Tiptap,
   },
-  mixins: [fileUploadMixin],
   data() {
     return {
       person: [],
@@ -63,7 +61,7 @@ export default {
         id: this.$route.params.id,
         name: this.changeName,
         description: this.changeDescription,
-        img: { data: this.data, format: this.format },
+        img: { data: this.changeData, format: this.changeFormat },
         interview: this.changeInterview,
       })
       location.reload()
@@ -73,6 +71,31 @@ export default {
       this.changeName = person.name
       this.changeDescription = person.description
       this.changeInterview = person.interview
+      this.changeData = this.data
+      this.changeFormat = this.format
+    },
+    handleFileUpload(event) {
+      const files = Array.from(event.target.files)
+      const file = files[0]
+      this.changeFormat = file.name.match(/\.([^.]+)$/)[1]
+      const reader = new FileReader()
+      reader.onload = ev => {
+        const src = ev.target.result
+        this.preview = src
+        this.changeData = reader.result
+      }
+      reader.readAsDataURL(file)
+    },
+    ChangehandleFileUpload(event) {
+      const files = Array.from(event.target.files)
+      const file = files[0]
+
+      const reader = new FileReader()
+      reader.onload = ev => {
+        const src = ev.target.result
+        this.changeImage = src
+      }
+      reader.readAsDataURL(file)
     },
   },
 }
@@ -81,27 +104,30 @@ export default {
 <template>
   <Main>
     <div class="changeButton">
-      <button class="changeBtn" @click="change(index, person)">O</button>
+      <button class="changeBtn" @click="change(index, person), show = !show">
+        <img src="@/assets/images/pen.svg" alt="" />
+      </button>
     </div>
     <div class="card__wrapper">
       <div class="card__container">
         <div class="card">
-          <button @click="updatePerson(person.id)" v-if="changedId === index" class="sendBtn">Подтвердить</button>
           <div class="info">
             <h2>{{ person.name }}</h2>
-            <input type="text" v-model="changeName" v-if="changedId === index" />
+            <input id="createName" type="text" v-model="changeName " v-if="changedId === index && show" />
             <div v-for="(key, headers) in person.description" :key="headers">
               <p>{{ key }}</p>
-              <input :key="headers" type="text" v-model="changeDescription[headers]" v-if="changedId === index" />
+              <input :key="headers" type="text" v-model="changeDescription[headers]" v-if="changedId === index && show" />
             </div>
           </div>
           <img class="img" :src="imgLink(person)" />
+          <input id="updateImage" type="file" v-if="changedId === index && show" @change="handleFileUpload" />
+          <button @click="updatePerson(person.id)" v-if="changedId === index && show" class="sendBtn">Подтвердить</button>
         </div>
-        <input type="file" v-if="changedId === index" @change="handleFileUpload" />
       </div>
     </div>
-    <Tiptap v-model="changeInterview" v-if="changedId === index" />
+    <Tiptap v-model="changeInterview" v-if="changedId === index && show" />
     <div class="container">
+      <button @click="updatePerson(person.id)" v-if="changedId === index && show" class="sendInterviewBtn">Подтвердить</button>
       <div class="interview">
         <div class="btn" @click="show = !show">
           <h2>Интервью</h2>
@@ -115,6 +141,25 @@ export default {
   </Main>
 </template>
 <style lang="scss" scoped>
+.sendInterviewBtn {
+  align-self: flex-start;
+}
+.changeButton {
+  display: flex;
+  justify-content: flex-start;
+  width: 80%;
+  margin: 20px auto;
+  .changeBtn {
+    width: 32px;
+    height: 32px;
+    border-radius: 5px;
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+}
 .card__wrapper {
   width: 100%;
   min-height: 100vh;
@@ -148,10 +193,17 @@ export default {
     .card {
       display: flex;
       align-items: flex-start;
+      flex-direction: column;
       width: 45%;
       height: 100%;
       gap: 40px;
       transition: 0.3s all ease;
+      input {
+        width: 100%;
+        padding: 10px;
+        outline: none;
+        border: 1px solid var(--blue);
+      }
       img {
         z-index: 1;
         position: absolute;

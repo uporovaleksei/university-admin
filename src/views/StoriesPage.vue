@@ -77,18 +77,12 @@ export default {
       </button>
       <div class="add__video" v-if="show">
         <form enctype="multipart/form-data">
-                  <label for="input">
-            Загрузить видео
-          </label>
+          <label for="input"> Загрузить видео </label>
           <input type="file" name="file" @change="uploadFile" />
         </form>
-                          <label for="input">
-            Заголовок видео
-          </label>
-                                    <label for="input">
-            Описание и длительность для видео
-          </label>
+        <label for="input">Заголовок видео</label>
         <input type="text" placeholder="Заголовок" v-model="title" />
+        <label for="input"> Длительность видео </label>
         <input type="text" placeholder="Длительность" v-model="duration" />
         <div class="create__image">
           <label for="input">Превью для видео</label>
@@ -131,7 +125,7 @@ export default {
   padding-bottom: 400px;
   display: flex;
   flex-direction: column;
- .btn__create {
+  .btn__create {
     margin: 20px;
     align-self: flex-start;
   }
@@ -140,11 +134,16 @@ export default {
     align-self: flex-start;
     display: flex;
     flex-direction: column;
-
     justify-content: flex-start;
     align-items: flex-start;
     gap: 20px;
     padding: 30px 0;
+    input {
+      width: 100%;
+      padding: 10px;
+      outline: none;
+      border: 1px solid var(--blue);
+    }
     .create__storie {
       align-self: flex-start;
     }
