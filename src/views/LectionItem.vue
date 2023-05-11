@@ -45,5 +45,6 @@ export default {
 <style>
 video {
   width: 400px;
+  margin: 40px;
 }
 </style>

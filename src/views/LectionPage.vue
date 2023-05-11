@@ -45,6 +45,7 @@ export default {
         title: this.title,
         img: { data: this.data, format: this.format },
         duration: this.duration,
+        description:this.description,
         path: this.path,
       })
       this.$router.go(0)
