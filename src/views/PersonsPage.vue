@@ -90,6 +90,7 @@ export default {
               <img alt="" :src="preview" />
             </div>
           </div>
+          <p>Для заголовка интревью используется тег h1, для вопроса тег h2, для ответа тег 'p'(paragraph)</p>
           <Tiptap v-model="interview" />
           <div class="accept__btn">
             <button @click="createPersons">Добавить</button>

@@ -104,7 +104,7 @@ export default {
             </div>
             <div class="info">
               <div class="title">
-                <h2>{{ item.title.split(' ').slice(0, 3).join(' ') + '....' }}</h2>
+                <h2>{{ item.title.split(' ').slice(0, 3).join(' ')}}</h2>
               </div>
               <div class="text"></div>
             </div>
