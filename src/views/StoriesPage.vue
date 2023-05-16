@@ -2,9 +2,8 @@
 import api from '@/utils/api'
 import imgLink from '@/utils/imgLink'
 import DeleteBtn from '@/components/DeleteBtn.vue'
-import Main from '@/layouts/Main.vue'
 import { fileUploadMixin } from '@/utils/fileUploadMixin.js'
-
+import Main from '@/layouts/Main.vue'
 export default {
   components: {
     Main,
@@ -19,8 +18,8 @@ export default {
       path: null,
       duration: null,
       show: false,
-      stories: null,
-      storie: [],
+      lectoins: null,
+      stories: [],
       tbname: 'stories',
       format: null,
       data: null,
@@ -37,7 +36,7 @@ export default {
     async getStories() {
       this.stories = await api.get('/stories')
     },
-    async createStories() {
+    async createStorie() {
       await api.post('stories', {
         title: this.title,
         img: { data: this.data, format: this.format },
@@ -46,26 +45,51 @@ export default {
       })
       this.$router.go(0)
     },
-    async uploadFile(event) {
-      const files = Array.from(event.target.files)
-      const file = files[0]
-      this.path = process.env.VUE_APP_SERVER_URL + file.name
-      console.log(this.path)
-      event.preventDefault()
-      const formData = new FormData()
-      formData.append('file', event.target.files[0])
-      try {
-        await api.post('/upload', formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        })
-        alert('File uploaded successfully')
-      } catch (error) {
-        console.error(error)
-        alert('Error uploading file')
-      }
-    },
+   async uploadFile(event) {
+  const files = Array.from(event.target.files);
+  const file = files[0];
+  this.path = process.env.VUE_APP_SERVER_URL + file.name;
+  console.log(this.path);
+  event.preventDefault();
+
+  const formData = new FormData();
+  formData.append('file', file);
+
+  const video = document.createElement('video');
+  video.onloadedmetadata = () => {
+    const duration = Math.floor(video.duration);
+    const formattedDuration = this.formatTime(duration);
+    this.duration = formattedDuration
+    console.log('Длительность видео:', formattedDuration);
+  };
+
+  video.src = URL.createObjectURL(file);
+
+  try {
+    await api.post('/upload', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    alert('Файл успешно загружен');
+  } catch (error) {
+    console.error(error);
+    alert('Ошибка загрузки файла');
+  }
+},
+ formatTime(seconds) {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const remainingSeconds = seconds % 60;
+    const formattedHours = String(hours).padStart(2, '0');
+    const formattedMinutes = String(minutes).padStart(2, '0');
+    const formattedSeconds = String(remainingSeconds).padStart(2, '0');
+    if(hours == 0){
+    return `${formattedMinutes}:${formattedSeconds}`;
+    }
+    return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
+
+  },
   },
 }
 </script>
@@ -80,20 +104,19 @@ export default {
           <label for="input"> Загрузить видео </label>
           <input type="file" name="file" @change="uploadFile" />
         </form>
-        <label for="input">Заголовок видео</label>
+        <label for="input"> Заголовок видео </label>
         <input type="text" placeholder="Заголовок" v-model="title" />
         <label for="input"> Длительность видео </label>
-        <input type="text" placeholder="Длительность" v-model="duration" />
+       <span>{{duration}}</span>
         <div class="create__image">
           <label for="input">Превью для видео</label>
           <input type="file" multiple="false" placeholder="Изображение" @change="handleFileUpload" />
           <div class="preview">
             <img alt="" :src="preview" />
           </div>
-          <button @click="createStories" class="create__storie">Загрузить</button>
+          <button @click="createStorie" class="create__storie">Загрузить</button>
         </div>
       </div>
-      <h1>{{ title }}</h1>
       <div class="cards">
         <div class="card" v-for="(item, index) in stories" :key="index">
           <DeleteBtn :id="item.id" :name="tbname" class="DeleteButton" />
@@ -104,9 +127,11 @@ export default {
             </div>
             <div class="info">
               <div class="title">
-                <h2>{{ item.title.split(' ').slice(0, 3).join(' ')}}</h2>
+                <h2>
+                  {{ item.title.split(' ').slice(0, 3).join(' ') + '....' }}
+                </h2>
               </div>
-              <div class="text"></div>
+
             </div>
           </router-link>
         </div>
@@ -125,6 +150,7 @@ export default {
   padding-bottom: 400px;
   display: flex;
   flex-direction: column;
+  align-items: center;
   .btn__create {
     margin: 20px;
     align-self: flex-start;
@@ -138,7 +164,12 @@ export default {
     align-items: flex-start;
     gap: 20px;
     padding: 30px 0;
-    input {
+    form{
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+        input {
       width: 100%;
       padding: 10px;
       outline: none;
@@ -166,11 +197,14 @@ export default {
   }
   .cards {
     display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
     margin: 60px 0;
     gap: 30px;
+    flex-wrap: wrap;
     .card {
       width: 370px;
-      height: 515px;
+      background: transparent;
       display: flex;
       flex-direction: column;
       border-radius: 10px;

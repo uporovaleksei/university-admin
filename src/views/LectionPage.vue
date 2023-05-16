@@ -50,26 +50,51 @@ export default {
       })
       this.$router.go(0)
     },
-    async uploadFile(event) {
-      const files = Array.from(event.target.files)
-      const file = files[0]
-      this.path = process.env.VUE_APP_SERVER_URL + file.name
-      console.log(this.path)
-      event.preventDefault()
-      const formData = new FormData()
-      formData.append('file', event.target.files[0])
-      try {
-        await api.post('/upload', formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        })
-        alert('File uploaded successfully')
-      } catch (error) {
-        console.error(error)
-        alert('Error uploading file')
-      }
-    },
+   async uploadFile(event) {
+  const files = Array.from(event.target.files);
+  const file = files[0];
+  this.path = process.env.VUE_APP_SERVER_URL + file.name;
+  console.log(this.path);
+  event.preventDefault();
+
+  const formData = new FormData();
+  formData.append('file', file);
+
+  const video = document.createElement('video');
+  video.onloadedmetadata = () => {
+    const duration = Math.floor(video.duration);
+    const formattedDuration = this.formatTime(duration);
+    this.duration = formattedDuration
+    console.log('Длительность видео:', formattedDuration);
+  };
+
+  video.src = URL.createObjectURL(file);
+
+  try {
+    await api.post('/upload', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    alert('Файл успешно загружен');
+  } catch (error) {
+    console.error(error);
+    alert('Ошибка загрузки файла');
+  }
+},
+ formatTime(seconds) {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const remainingSeconds = seconds % 60;
+    const formattedHours = String(hours).padStart(2, '0');
+    const formattedMinutes = String(minutes).padStart(2, '0');
+    const formattedSeconds = String(remainingSeconds).padStart(2, '0');
+    if(hours == 0){
+    return `${formattedMinutes}:${formattedSeconds}`;
+    }
+    return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
+
+  },
   },
 }
 </script>
@@ -95,7 +120,7 @@ export default {
           v-model="description[key]"
         />
         <label for="input"> Длительность видео </label>
-        <input type="text" placeholder="Длительность" v-model="duration" />
+       <span>{{duration}}</span>
         <div class="create__image">
           <label for="input">Превью для видео</label>
           <input type="file" multiple="false" placeholder="Изображение" @change="handleFileUpload" />
