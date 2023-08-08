@@ -3,12 +3,14 @@ import api from '@/utils/api'
 import imgLink from '@/utils/imgLink'
 import DeleteBtn from '@/components/DeleteBtn.vue'
 import { fileUploadMixin } from '@/utils/fileUploadMixin.js'
+
 import Main from '@/layouts/Main.vue'
 export default {
   components: {
     Main,
     DeleteBtn,
   },
+
   mixins: [fileUploadMixin],
   data() {
     return {
@@ -34,7 +36,6 @@ export default {
   created() {
     this.getLections()
   },
-
   methods: {
     async getLections() {
       this.lections = await api.get('/lections')
@@ -101,7 +102,7 @@ export default {
 <template>
   <Main>
     <div class="container">
-      <button @click="show = !show" class="btn__create">
+      <button @click="show = !show"   class="btn__create">
         {{ show ? 'Закрыть' : 'Создать' }}
       </button>
       <div class="add__video" v-if="show">

@@ -1,4 +1,9 @@
 <script>
+
+import { useAuthStore } from '@/store/index.js';
+import api from '@/utils/api'
+
+
 export default {
   data() {
     return {
@@ -17,19 +22,39 @@ export default {
         },
       ],
       menuIsOpen: false,
+      authStore: useAuthStore(),
     }
   },
+     computed: {
+    isAdmin(){
+      console.log(this.authStore.user);
+       return this.authStore.user?.is_admin;
+    }
+  },
+  methods:{
+        async logout() {
+      await api.post('/logout')
+      this.authStore.forgetUser()
+      this.$router.push('/')
+
+    },
+  }
 }
 </script>
 
 <template>
-  <nav>
+  <nav v-if="isAdmin">
     <div class="content">
       <ul>
         <li v-for="item in paths" :key="item.path">
           <router-link :to="item.path" :class="{ active__links: menuIsOpen, main: path === '/' }">
             {{ item.label }}
           </router-link>
+        </li>
+        <li class="logout">
+          <a href="#" @click="logout">
+            Выход
+          </a>
         </li>
       </ul>
     </div>
@@ -57,6 +82,10 @@ nav {
           font-weight: 500;
         }
       }
+       .logout{
+        position: absolute;
+        right: 20%;
+      } 
     }
   }
 }

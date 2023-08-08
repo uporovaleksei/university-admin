@@ -1,5 +1,11 @@
 <template>
   <div>
+
+    <div v-if="authStore.isAuthenticated">
+      Добро пожаловать, {{ authStore.user.login }}
+      <button @click="logout">Выйти</button>
+    </div>
+
     <div class="auth">
       <div class="auth__container">
         <div class="auth__body">
@@ -7,13 +13,13 @@
             <h1>Авторизация</h1>
           </div>
           <div class="reg__login">
-            <input type="text" placeholder="Логин" v-model="user" />
+            <input type="text" placeholder="Логин" v-model="loginInput" />
           </div>
           <div class="reg__password">
-            <input type="password" placeholder="Пароль" v-model="password" />
+            <input type="password" placeholder="Пароль" v-model="passwordInput" />
           </div>
           <div class="auth__submit">
-            <button @click="login">Войти</button>
+            <button @click="getLogin">Войти</button>
           </div>
         </div>
       </div>
@@ -22,30 +28,36 @@
 </template>
 
 <script>
+import { useAuthStore } from '@/store/index.js';
+import api from '@/utils/api'
+
 export default {
-  name: 'Authorization',
   data() {
     return {
-      user: null,
-      password: null,
+      loginInput: '',
+      passwordInput: '',
+      authStore: useAuthStore(),
     }
   },
   methods: {
-    async login() {
-      const data = await this.$store.dispatch('login', {
-        login: this.user,
-        password: this.password,
+    async getLogin() {
+      const response = await api.post('/login', {
+        login: this.loginInput,
+        password: this.passwordInput,
       })
-      if (data?.error) {
-        alert(data.error)
+
+      if (response?.error) {
+        alert(response.error)
         return
       }
-      this.$router.push({ path: '/lections' })
-      console.log('Suscces')
+      this.authStore.setUser(response)
+      this.$router.push({ name: 'lections' })
     },
+
   },
 }
 </script>
+
 
 <style lang="scss">
 .auth {

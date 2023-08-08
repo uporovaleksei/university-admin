@@ -1,40 +1,31 @@
-import { createStore } from 'vuex'
+// store/index.js
 
-import api from '@/utils/api'
-import router from '../router'
+import { defineStore } from 'pinia';
+import api from '../utils/api';
 
-export default createStore({
-  state: {
-    user: null,
-  },
-  mutations: {
-    forgetUser(state) {
-      state.user = null
-      router.push({ name: '/' }).catch()
-    },
-    setUser(state, user) {
-      state.user = user
-    },
-  },
+export const useAuthStore = defineStore('auth', {
+  state: () => ({
+    user: JSON.parse(localStorage.getItem('user')) || null,
+  }),
   actions: {
-    async login(context, payload) {
-      const data = await api.post('/login', payload)
-      if (data.error) return data
-      context.commit('setUser', data)
+    forgetUser() {
+      this.user = null;
+      localStorage.removeItem('user')
     },
-    async logout(context) {
-      await api.post('/logout')
-      context.commit('forgetUser')
+    setUser( user) {
+      this.user = user;
+      localStorage.setItem('user', JSON.stringify(user));
     },
-    async reg(context, payload) {
-      const data = await api.post('/reg', payload)
-      if (data.error) return data
-      context.commit('setUser', data)
+    async login() {
+      const user = await api.post("/login");
+      if (user.error) {
+        return user;
+      }
+      this.setUser(user)
     },
-    async refresh(context) {
-      const user = await api.get('/refresh')
-      if (user.error) return user
-      context.commit('setUser', user)
+    async logout(commit ) {
+      await api.post("user/logout");
+      commit("forgetUser");
     },
   },
-})
+});
