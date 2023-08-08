@@ -1,5 +1,3 @@
-// store/index.js
-
 import { defineStore } from 'pinia';
 import api from '../utils/api';
 
