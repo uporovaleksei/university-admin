@@ -39,7 +39,6 @@ export default {
   methods: {
     async getLections() {
       this.lections = await api.get('/lections')
-      console.log(this.items)
     },
     async createLection() {
       await api.post('lections', {
@@ -55,7 +54,6 @@ export default {
   const files = Array.from(event.target.files);
   const file = files[0];
   this.path = process.env.VUE_APP_VIDEO_URL + file.name;
-  console.log(this.path);
   event.preventDefault();
 
   const formData = new FormData();

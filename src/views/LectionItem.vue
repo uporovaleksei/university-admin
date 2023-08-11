@@ -44,7 +44,7 @@ export default {
       this.lection = await api.get(`/lection/${this.$route.params.id}`)
     },
     async updateLection() {
-      await api.put(`/lections/${this.$route.params.id}`, {
+      await api.patch(`/lections/${this.$route.params.id}`, {
         id: this.$route.params.id,
         title: this.changeTitle,
         description: this.changeDescription,

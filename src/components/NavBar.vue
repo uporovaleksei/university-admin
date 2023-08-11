@@ -27,7 +27,6 @@ export default {
   },
      computed: {
     isAdmin(){
-      console.log(this.authStore.user);
        return this.authStore.user?.is_admin;
     }
   },

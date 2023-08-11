@@ -56,7 +56,6 @@ export default {
       this.person = await api.get('/person/' + this.$route.params.id)
     },
     async updatePerson() {
-      console.log(this.changeInterview)
       await api.put('persons/' + this.$route.params.id, {
         id: this.$route.params.id,
         name: this.changeName,

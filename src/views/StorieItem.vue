@@ -41,7 +41,7 @@ export default {
       this.storie = await api.get(`/storie/${this.$route.params.id}`)
     },
     async updateStorie() {
-      await api.put(`/stories/${this.$route.params.id}`, {
+      await api.patch(`/stories/${this.$route.params.id}`, {
         id: this.$route.params.id,
         title: this.changeTitle,
         img: { data: this.changeData, format: this.changeFormat },

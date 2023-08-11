@@ -14,7 +14,7 @@ export default {
   data() {
     return {
       async del(name, id) {
-        let accept = confirm('Удалить элемент?')
+        const accept = confirm('Удалить элемент?')
         if (accept) {
           await api.delete(name + '/' + id)
           location.reload()
