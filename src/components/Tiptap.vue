@@ -81,7 +81,6 @@ export default {
       onUpdate: () => {
         // HTML
         this.$emit('update:modelValue', this.editor.getHTML())
-      console.log(window.pageYOffset);
         // JSON
         // this.$emit('update:modelValue', this.editor.getJSON())
       },

@@ -46,7 +46,6 @@ export default {
     }
   },
   created() {
-    console.log(this.authStore.user?.is_admin);
     this.getPerson()
   },
   computed: {
