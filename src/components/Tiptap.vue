@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="editor" class="editor__container">
+    <div v-if="editor" class="editor__container" :class="{ fixed: fixedScroll>1100 }">
       <button @click="editor.chain().focus().unsetAllMarks().run()">clear marks</button>
       <button @click="editor.chain().focus().clearNodes().run()">clear nodes</button>
       <button
@@ -49,9 +49,14 @@ export default {
   data() {
     return {
       editor: null,
+      fixedScroll:null,
     }
   },
-
+  methods:{
+    handleScroll () {
+      this.fixedScroll = window.pageYOffset
+    }
+  },
   watch: {
     modelValue(value) {
       // HTML
@@ -69,13 +74,14 @@ export default {
   },
 
   mounted() {
+    window.addEventListener('scroll', this.handleScroll);
     this.editor = new Editor({
       extensions: [StarterKit],
       content: this.modelValue,
       onUpdate: () => {
         // HTML
         this.$emit('update:modelValue', this.editor.getHTML())
-
+      console.log(window.pageYOffset);
         // JSON
         // this.$emit('update:modelValue', this.editor.getJSON())
       },
@@ -84,6 +90,7 @@ export default {
 
   beforeUnmount() {
     this.editor.destroy()
+    window.removeEventListener('scroll', this.handleScroll);
   },
 }
 </script>
@@ -92,6 +99,15 @@ export default {
   padding: 10px;
   border: 2px solid var(--blue);
   border-bottom: 0;
+  &.fixed{
+    position: fixed;
+    z-index: 100;
+    background: #fff;
+    border: 2px solid var(--blue);
+    top: 0;
+    width: 100%;
+    left: 0%;
+  }
 }
 button {
   padding: 3px;

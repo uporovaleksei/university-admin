@@ -153,6 +153,7 @@ export default {
         </div>
       </div>
     </div>
+    <button id="scroll" @click="showScroll">scroll</button>
   </Main>
 </template>
 

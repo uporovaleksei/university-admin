@@ -1,4 +1,4 @@
-import store from '@/store'
+import {useAuthStore} from '@/store/index'
 import axios from 'axios'
 
 const client = axios.create({
@@ -9,12 +9,13 @@ const client = axios.create({
 
 client.interceptors.response.use(
   response => {
+    console.log(response.data);
     return response.data
   },
   error => {
     console.log(error)
     if (error.response.status === 403) {
-      store.dispatch('logout')
+      useAuthStore().logout()
     }
     throw new Error(`Axios: ${error.message}. ${error.response.data}`)
   }

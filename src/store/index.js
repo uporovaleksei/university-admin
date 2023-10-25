@@ -8,9 +8,9 @@ export const useAuthStore = defineStore('auth', {
   actions: {
     forgetUser() {
       this.user = null;
-      localStorage.removeItem('user')
+      localStorage.removeItem('user');
     },
-    setUser( user) {
+    setUser(user) {
       this.user = user;
       localStorage.setItem('user', JSON.stringify(user));
     },
@@ -19,11 +19,11 @@ export const useAuthStore = defineStore('auth', {
       if (user.error) {
         return user;
       }
-      this.setUser(user)
+      this.setUser(user);
     },
-    async logout(commit ) {
-      await api.post("user/logout");
-      commit("forgetUser");
+    async logout() { 
+      await api.post("/logout");
+      this.forgetUser(); 
     },
   },
 });

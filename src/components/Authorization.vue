@@ -51,6 +51,7 @@ export default {
         return
       }
       this.authStore.setUser(response)
+      console.log(this.authStore.user);
       this.$router.push({ name: 'lections' })
     },
 

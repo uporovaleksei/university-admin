@@ -3,6 +3,7 @@ import api from '@/utils/api'
 import imgLink from '@/utils/imgLink'
 import Tiptap from '@/components/Tiptap.vue'
 import Main from '@/layouts/Main.vue'
+import {useAuthStore} from '@/store/index'
 
 export default {
   components: {
@@ -11,6 +12,7 @@ export default {
   },
   data() {
     return {
+      authStore: useAuthStore(),
       person: [],
       imgLink: imgLink,
       show: false,
@@ -44,11 +46,12 @@ export default {
     }
   },
   created() {
+    console.log(this.authStore.user?.is_admin);
     this.getPerson()
   },
   computed: {
     isAdmin() {
-      return this.$store.state.user?.is_admin
+      return this.authStore.user?.is_admin
     },
   },
   methods: {
@@ -111,15 +114,18 @@ export default {
       <div class="card__container">
         <div class="card">
           <div class="info">
-            <h2>{{ person.name }}</h2>
+            <h2 v-if="isAdmin">{{ person.name }}</h2>
             <input id="createName" type="text" v-model="changeName " v-if="changedId === index && show" />
-            <div v-for="(key, headers) in person.description" :key="headers">
+            <div v-for="(key, headers) in person.description" :key="headers" class="description">
               <p>{{ key }}</p>
               <input :key="headers" type="text" v-model="changeDescription[headers]" v-if="changedId === index && show" />
             </div>
           </div>
+          <div class="image">
           <img class="img" :src="imgLink(person)" />
           <input id="updateImage" type="file" v-if="changedId === index && show" @change="handleFileUpload" />
+
+          </div>
           <button @click="updatePerson(person.id)" v-if="changedId === index && show" class="sendBtn">Подтвердить</button>
         </div>
       </div>
@@ -163,11 +169,10 @@ export default {
   width: 100%;
   min-height: 100vh;
   margin: 0 auto;
-  padding-top: 120px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   position: relative;
   span {
     &::after {
@@ -192,8 +197,8 @@ export default {
     .card {
       display: flex;
       align-items: flex-start;
-      flex-direction: column;
-      width: 45%;
+      justify-content: space-between;
+      width: 100%;
       height: 100%;
       gap: 40px;
       transition: 0.3s all ease;
@@ -203,28 +208,37 @@ export default {
         outline: none;
         border: 1px solid var(--blue);
       }
+      .image{
+        display: flex;
+        flex-direction: column;
+      
       img {
-        z-index: 1;
-        position: absolute;
-        bottom: 0;
-        right: 15%;
         object-fit: contain;
-        width: 35%;
+        width: 100%;
         border-radius: 10px;
         transition: 0.3s all ease;
+      }
       }
       .info {
         width: 100%;
         display: flex;
         flex-direction: column;
+        align-items: flex-start;
         gap: 15px;
         color: #0c0c0c;
+        .description{
+          display: flex;
+          flex-direction: column;
+          justify-content: flex-start;
+          align-self: flex-start;
+          width: 100%;
+        }
         h2 {
+          align-self: flex-start;
           font-family: 'Mulish';
           font-style: normal;
           font-weight: 700;
-          font-size: 36px;
-          text-transform: uppercase;
+          font-size: 24px;
         }
         h3 {
           margin-top: 60px;
@@ -237,6 +251,7 @@ export default {
           font-style: normal;
           font-weight: 400;
           font-size: 20px;
+          text-align: start;
         }
       }
     }
