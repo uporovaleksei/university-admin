@@ -1,9 +1,9 @@
 <script>
-import api from '@/utils/api'
-import imgLink from '@/utils/imgLink'
-import Tiptap from '@/components/Tiptap.vue'
-import Main from '@/layouts/Main.vue'
-import {useAuthStore} from '@/store/index'
+import api from '@/utils/api';
+import imgLink from '@/utils/imgLink';
+import Tiptap from '@/components/Tiptap.vue';
+import Main from '@/layouts/Main.vue';
+import { useAuthStore } from '@/store/index';
 
 export default {
   components: {
@@ -14,26 +14,11 @@ export default {
     return {
       authStore: useAuthStore(),
       person: [],
-      preloader:false,
+      preloader: true,
       imgLink: imgLink,
       show: false,
       tbname: 'persons',
-      name: null,
-      format: null,
-      data: null,
-      priority: null,
-      image: null,
-      img_id: null,
-      description: {
-        Должность: '',
-        'Ученая степень': '',
-        'Ученое звание': '',
-      },
-      interview: null,
-      preview: null,
-      showChange: false,
       changedId: -1,
-      changeImage: null,
       changeName: null,
       changeData: null,
       changeFormat: null,
@@ -43,73 +28,66 @@ export default {
         'Ученое звание': '',
       },
       changeInterview: null,
-      id: null,
-    }
+    };
   },
   created() {
-    this.getPerson()
+    this.getPerson();
   },
   computed: {
     isAdmin() {
-      return this.authStore.user?.is_admin
+      return this.authStore.user?.is_admin;
     },
-
   },
   methods: {
     async getPerson() {
-      this.person = await api.get('/person/' + this.$route.params.id)
+      this.showPreloader(true)
+      this.person = await api.get(`/person/${this.$route.params.id}`);
+      document.body.style = 'overflow: auto;'
+      this.showPreloader(false)
     },
-    async updatePerson() {
-      this.preloader = true;
-      document.body.classList.add('noScroll');
-      await api.put('persons/' + this.$route.params.id, {
-        id: this.$route.params.id,
+    async updatePerson(personId) {
+      this.showPreloader(true)
+      await api.put(`persons/${personId}`, {
+        id: personId,
         name: this.changeName,
         description: this.changeDescription,
         img: { data: this.changeData, format: this.changeFormat },
         interview: this.changeInterview,
-      })
-      this.preloader = false;
-      document.body.classList.remove('noScroll');
-      location.reload()
+      });
+      this.showPreloader(false)
+      location.reload();
     },
     change(index, person) {
-      this.changedId = index
-      this.changeName = person.name
-      this.changeDescription = person.description
-      this.changeInterview = person.interview
-      this.changeData = this.data
-      this.changeFormat = this.format
+      this.changedId = index;
+      this.changeName = person.name;
+      this.changeDescription = { ...person.description };
+      this.changeInterview = person.interview;
+      this.changeData = null;
+      this.changeFormat = null;
     },
     handleFileUpload(event) {
-      const files = Array.from(event.target.files)
-      const file = files[0]
-      this.changeFormat = file.name.match(/\.([^.]+)$/)[1]
-      const reader = new FileReader()
-      reader.onload = ev => {
-        const src = ev.target.result
-        this.preview = src
-        this.changeData = reader.result
-      }
-      reader.readAsDataURL(file)
+      const file = event.target.files[0];
+      this.changeFormat = file.name.match(/\.([^.]+)$/)[1];
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        this.changeData = ev.target.result;
+      };
+      reader.readAsDataURL(file);
     },
-    ChangehandleFileUpload(event) {
-      const files = Array.from(event.target.files)
-      const file = files[0]
-
-      const reader = new FileReader()
-      reader.onload = ev => {
-        const src = ev.target.result
-        this.changeImage = src
+    showPreloader(status){
+      this.preloader = status
+      if(this.preloader == true){
+        document.body.style = 'overflow: hidden;'
+      }else{
+        document.body.style = 'overflow: auto;'
       }
-      reader.readAsDataURL(file)
-    },
+    }
   },
-}
+};
 </script>
 
 <template>
-  <Main >
+  <Main>
     <div class="changeButton">
       <button class="changeBtn" @click="change(index, person), show = !show">
         <img src="@/assets/images/pen.svg" alt="" />
@@ -120,16 +98,15 @@ export default {
         <div class="card">
           <div class="info">
             <h2 v-if="isAdmin">{{ person.name }}</h2>
-            <input id="createName" type="text" v-model="changeName " v-if="changedId === index && show" />
+            <input id="createName" type="text" v-model="changeName" v-if="changedId === index && show" />
             <div v-for="(key, headers) in person.description" :key="headers" class="description">
               <p>{{ key }}</p>
               <input :key="headers" type="text" v-model="changeDescription[headers]" v-if="changedId === index && show" />
             </div>
           </div>
           <div class="image">
-          <img class="img" :src="imgLink(person)" />
-          <input id="updateImage" type="file" v-if="changedId === index && show" @change="handleFileUpload" />
-
+            <img class="img" :src="imgLink(person)" />
+            <input id="updateImage" type="file" v-if="changedId === index && show" @change="handleFileUpload" />
           </div>
           <button @click="updatePerson(person.id)" v-if="changedId === index && show" class="sendBtn">Подтвердить</button>
         </div>
@@ -143,19 +120,18 @@ export default {
           <h2>Интервью</h2>
         </div>
         <transition name="slide-fade">
-          <div class="text" >{{person.interview}}</div>
+          <div class="text">{{ person.interview }}</div>
         </transition>
       </div>
     </div>
     <div class="preloader" v-if="preloader">
-    <span class="loader"></span>
+      <span class="loader"></span>
     </div>
   </Main>
 </template>
+
 <style lang="scss" scoped>
-.noScroll{
-  overflow-y: hidden;
-}
+
 .sendInterviewBtn {
   align-self: flex-start;
 }
