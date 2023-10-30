@@ -153,14 +153,11 @@ export default {
         </div>
       </div>
     </div>
-    <button id="scroll" @click="showScroll">scroll</button>
   </Main>
 </template>
 
 <style lang="scss" scoped>
-.scroll {
-  background: red;
-}
+
 .container {
   width: 80%;
   margin: 0 auto;

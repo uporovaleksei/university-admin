@@ -324,7 +324,7 @@ export default {
 }
 .person__create__container {
   width: 60%;
-  margin: 160px auto 0 auto;
+  margin: 60px auto 0 auto;
 
   display: flex;
   flex-direction: column;

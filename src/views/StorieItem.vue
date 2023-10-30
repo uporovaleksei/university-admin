@@ -125,6 +125,12 @@ export default {
       height: 100%;
       object-fit: cover;
     }
+    &:hover{
+      opacity: 0.8;
+    }
+    &:active{
+      scale: 0.18;
+    }
   }
 }
 .card{

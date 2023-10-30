@@ -14,6 +14,7 @@ export default {
     return {
       authStore: useAuthStore(),
       person: [],
+      preloader:false,
       imgLink: imgLink,
       show: false,
       tbname: 'persons',
@@ -52,12 +53,15 @@ export default {
     isAdmin() {
       return this.authStore.user?.is_admin
     },
+
   },
   methods: {
     async getPerson() {
       this.person = await api.get('/person/' + this.$route.params.id)
     },
     async updatePerson() {
+      this.preloader = true;
+      document.body.classList.add('noScroll');
       await api.put('persons/' + this.$route.params.id, {
         id: this.$route.params.id,
         name: this.changeName,
@@ -65,6 +69,8 @@ export default {
         img: { data: this.changeData, format: this.changeFormat },
         interview: this.changeInterview,
       })
+      this.preloader = false;
+      document.body.classList.remove('noScroll');
       location.reload()
     },
     change(index, person) {
@@ -103,7 +109,7 @@ export default {
 </script>
 
 <template>
-  <Main>
+  <Main >
     <div class="changeButton">
       <button class="changeBtn" @click="change(index, person), show = !show">
         <img src="@/assets/images/pen.svg" alt="" />
@@ -135,16 +141,21 @@ export default {
       <div class="interview">
         <div class="btn" @click="show = !show">
           <h2>Интервью</h2>
-          <button>></button>
         </div>
         <transition name="slide-fade">
-          <div class="text" v-html="person.interview"></div>
+          <div class="text" >{{person.interview}}</div>
         </transition>
       </div>
+    </div>
+    <div class="preloader" v-if="preloader">
+    <span class="loader"></span>
     </div>
   </Main>
 </template>
 <style lang="scss" scoped>
+.noScroll{
+  overflow-y: hidden;
+}
 .sendInterviewBtn {
   align-self: flex-start;
 }
@@ -157,17 +168,23 @@ export default {
     width: 32px;
     height: 32px;
     border-radius: 5px;
+    cursor: pointer;
     img {
       width: 100%;
       height: 100%;
       object-fit: cover;
     }
+        &:hover{
+      opacity: 0.8;
+    }
+    &:active{
+      scale: 0.93;
+    }
   }
 }
 .card__wrapper {
   width: 100%;
-  min-height: 100vh;
-  margin: 0 auto;
+  margin: 40px auto;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -192,6 +209,9 @@ export default {
     width: 80%;
     margin: 0 auto;
     height: 100%;
+    padding: 15px;
+    border-radius: 15px;
+    box-shadow: 0 0 5px #135aae;
     min-height: 600px;
     .card {
       display: flex;
@@ -201,6 +221,11 @@ export default {
       height: 100%;
       gap: 40px;
       transition: 0.3s all ease;
+      .sendBtn{
+        padding: 8px;
+        border-radius: 5px;
+        cursor: pointer;
+      }
       input {
         width: 100%;
         padding: 10px;
@@ -261,7 +286,6 @@ export default {
   z-index: 20;
   width: 80%;
   margin: 0 auto;
-  padding: 180px 0;
   display: flex;
   flex-direction: column;
 
@@ -333,4 +357,35 @@ export default {
   transform: translateY(220px);
   opacity: 0;
 }
+.preloader{
+  position: absolute;
+  width: 100%;
+  height: 100dvh;
+  background: #00000053;
+  top: 0;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+.loader {
+    width: 48px;
+    height: 48px;
+    border: 5px solid #FFF;
+    border-bottom-color: #135aae;
+    border-radius: 50%;
+    display: inline-block;
+    box-sizing: border-box;
+    animation: rotation 1s linear infinite;
+    }
+
+    @keyframes rotation {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+    } 
+}
+
 </style>
