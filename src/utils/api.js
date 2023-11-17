@@ -4,7 +4,7 @@ import axios from 'axios'
 const client = axios.create({
   baseURL: process.env.VUE_APP_SERVER_URL,
   withCredentials: true,
-  timeout: 1000 * 60 * 20,
+  timeout: 100000 * 60 * 20,
 })
 
 client.interceptors.response.use(
